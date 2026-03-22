@@ -16,7 +16,7 @@ data_desa = {
         "Pemberian BLT Dana Desa", 
         "Renovasi Posyandu"
     ],
-    "Anggaran (Rp)": [150000000, 45000000, 90000000, 35000000],
+    "Anggaran (Rp)": [300000000, 45000000, 90000000, 35000000],
     "Terpakai (Rp)": [145000000, 20000000, 90000000, 10000000],
     "Progres Fisik": ["100%", "45%", "100%", "25%"],
     "Status": ["Selesai", "Berjalan", "Selesai", "Perencanaan"]
@@ -46,7 +46,7 @@ st.table(df) # Menggunakan table agar mudah dibaca di layar HP
 with st.sidebar:
     st.header("🔑 Akses Admin")
     st.write("Gunakan area ini untuk mengunci laporan bulanan.")
-    bulan = st.selectbox("Pilih Bulan Laporan", ["Januari", "Februari", "Maret"])
+    bulan = st.selectbox("Pilih Bulan Laporan", ["maret"])
     if st.button("Kunci & Arsipkan"):
         st.warning(f"Laporan bulan {bulan} telah dikunci dan dikirim ke sistem kabupaten.")
 
