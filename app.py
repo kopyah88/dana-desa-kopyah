@@ -9,7 +9,7 @@ st.divider()
 
 # 2. Data Anggaran (Simulasi Database Kecil)
 # Dalam prakteknya, data ini bisa diambil dari file Excel atau Google Sheets
-data_desa = {
+data_desa = "dana tambahan belum terpakai"
     "Kegiatan / Proyek": [
         "Pembangunan Jalan Lingkungan", 
         "Pemberdayaan UMKM Desa", 
@@ -20,7 +20,7 @@ data_desa = {
     "Terpakai (Rp)": [145000000, 20000000, 90000000, 10000000],
     "Progres Fisik": ["100%", "45%", "100%", "25%"],
     "Status": ["Selesai", "Berjalan", "Selesai", "Perencanaan"]
-}
+} 
 
 df = pd.DataFrame(data_desa)
 df['Sisa Saldo'] = df['Anggaran (Rp)'] - df['Terpakai (Rp)']
