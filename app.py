@@ -9,7 +9,7 @@ st.divider()
 
 # 2. Data Anggaran (Simulasi Database Kecil)
 # Dalam prakteknya, data ini bisa diambil dari file Excel atau Google Sheets
-data_desa = "dana tambahan belum terpakai"
+data_desa = 
     "Kegiatan / Proyek": [
         "Pembangunan Jalan Lingkungan", 
         "Pemberdayaan UMKM Desa", 
