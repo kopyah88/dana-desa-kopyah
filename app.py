@@ -1,70 +1,158 @@
 import streamlit as st
 import pandas as pd
-import streamlit.components.v1 as components
+import os
 
-# 1. Judul & Header (KODE ASLI ANDA)
-st.set_page_config(page_title="Transparansi Dana Desa", layout="centered")
-st.title("🏡 Sistem Transparansi Dana Desa")
-st.markdown("Portal pemantauan anggaran desa untuk warga.")
-st.divider()
+# =========================================
+# CONFIG
+# =========================================
+st.set_page_config(page_title="Dashboard Dana Desa", layout="wide")
 
-# 2. Data Anggaran (KODE ASLI ANDA)
+# =========================================
+# CUSTOM CSS
+# =========================================
+st.markdown("""
+<style>
+body {
+    background-color: #0e1117;
+}
+.card {
+    padding: 20px;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #1f2937, #111827);
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    text-align: center;
+}
+.title {
+    font-size: 28px;
+    font-weight: bold;
+}
+.sub {
+    color: #9ca3af;
+}
+.review-box {
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:10px;
+    background:#1f2937;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# =========================================
+# HEADER
+# =========================================
+st.markdown("""
+<div style="display:flex; align-items:center; gap:15px;">
+    <img src="https://imgs.click/img/03/23/2026/photo_2026-03-24_02-07-34.jpg" width="80">
+    <div>
+        <div class="title">Dashboard Transparansi Dana Desa</div>
+        <div class="sub">Monitoring real-time anggaran & pembangunan desa</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# =========================================
+# DATA
+# =========================================
 data_desa = {
-    "Kegiatan / Proyek": [
-        "Pembangunan Jalan Lingkungan",
-        "Pemberdayaan UMKM Desa",
-        "Pemberian BLT Dana Desa",
-        "Renovasi Posyandu"
-    ],
-    "Anggaran (Rp)": [300000000, 45000000, 90000000, 35000000],
-    "Terpakai (Rp)": [145000000, 20000000, 90000000, 10000000],
-    "Progres Fisik": ["100%", "45%", "100%", "25%"],
-    "Status": ["Selesai", "Berjalan", "Selesai", "Perencanaan"]
+    "Kegiatan": ["Jalan Lingkungan","UMKM Desa","BLT Dana Desa","Posyandu"],
+    "Anggaran": [300000000,45000000,90000000,35000000],
+    "Terpakai": [145000000,20000000,90000000,10000000],
+    "Progress": [100,45,100,25],
+    "Status": ["Selesai","Berjalan","Selesai","Perencanaan"]
 }
 
 df = pd.DataFrame(data_desa)
-df['Sisa Saldo'] = df['Anggaran (Rp)'] - df['Terpakai (Rp)']
+df["Sisa"] = df["Anggaran"] - df["Terpakai"]
 
-# 3. Ringkasan Kas Desa (KODE ASLI ANDA)
-total_dana = df['Anggaran (Rp)'].sum()
-total_terpakai = df['Terpakai (Rp)'].sum()
-sisa_kas = total_dana - total_terpakai
+# =========================================
+# KPI
+# =========================================
+total = df["Anggaran"].sum()
+used = df["Terpakai"].sum()
+sisa = total - used
 
-c1, c2 = st.columns(2)
+c1, c2, c3 = st.columns(3)
+
 with c1:
-    st.info(f"**Total Dana Desa:** \nRp {total_dana:,}")
+    st.markdown(f"""<div class="card"><h3>💰 Total Dana</h3><h2>Rp {total:,}</h2></div>""", unsafe_allow_html=True)
 with c2:
-    st.success(f"**Sisa Kas Saat Ini:** \nRp {sisa_kas:,}")
+    st.markdown(f"""<div class="card"><h3>📉 Terpakai</h3><h2>Rp {used:,}</h2></div>""", unsafe_allow_html=True)
+with c3:
+    st.markdown(f"""<div class="card"><h3>🏦 Sisa Kas</h3><h2>Rp {sisa:,}</h2></div>""", unsafe_allow_html=True)
 
-st.divider()
+st.markdown("---")
 
-# 4. Tabel Rinci (KODE ASLI ANDA)
-st.subheader("📋 Rincian Pengeluaran & Proyek")
-st.table(df)
+# =========================================
+# PROGRESS
+# =========================================
+st.subheader("📊 Progress Proyek")
 
-# 5. Interaksi Warga / Kolom Komentar (FITUR BARU)
-st.divider()
-st.subheader("💬 Masukan & Komentar Publik")
-st.caption("Gunakan kolom di bawah untuk memberikan saran atau masukan kepada admin secara publik.")
+for i in range(len(df)):
+    st.write(f"{df['Kegiatan'][i]} ({df['Status'][i]})")
+    st.progress(df["Progress"][i] / 100)
 
-# Konfigurasi Disqus
-disqus_shortname = "dana-desa-kopyah" 
+st.markdown("---")
 
-disqus_html = f"""
-    <div id="disqus_thread"></div>
-    <script>
-        var disqus_config = function () {{
-            this.page.url = window.location.origin;
-            this.page.identifier = "dana-desa-kopyah-final-banget"; 
-        }};
-        (function() {{
-            var d = document, s = d.createElement('script');
-            s.src = 'https://{disqus_shortname}.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        }})();
-    </script>
-"""
+# =========================================
+# TABEL
+# =========================================
+st.subheader("📋 Detail Anggaran")
+st.dataframe(df, use_container_width=True)
 
-# Menampilkan Disqus
-components.html(disqus_html, height=600, scrolling=True)
+# =========================================
+# KOMENTAR + RATING (FINAL)
+# =========================================
+st.markdown("---")
+st.subheader("⭐️ Penilaian & Komentar Warga")
+
+file_komen = "komentar.csv"
+
+# AUTO DATA AWAL
+if not os.path.exists(file_komen):
+    data_awal = pd.DataFrame([
+        ["Budi - Jakarta", 5, "Sekarang transparansi dana desa jauh lebih jelas, semua pengeluaran terlihat rapi dan terbuka."],
+        ["Siti - Surabaya", 5, "Dengan sistem ini, dana desa terasa lebih aman dan tidak ada lagi keraguan dari masyarakat."],
+        ["Andi - Bandung", 5, "Sangat membantu! Informasi anggaran jadi mudah dipantau, semoga terus konsisten transparan."]
+    ], columns=["Nama","Rating","Komentar"])
+
+    data_awal.to_csv(file_komen, index=False)
+
+# INPUT USER
+nama = st.text_input("Nama")
+rating = st.slider("Rating", 1, 5, 5)
+komentar = st.text_area("Komentar")
+
+if st.button("Kirim Komentar"):
+    if nama and komentar:
+        df_komen = pd.read_csv(file_komen)
+        new = pd.DataFrame([[nama, rating, komentar]], columns=["Nama","Rating","Komentar"])
+        df_komen = pd.concat([df_komen, new], ignore_index=True)
+        df_komen.to_csv(file_komen, index=False)
+        st.success("✅ Komentar tersimpan!")
+    else:
+        st.warning("⚠️ Isi semua field")
+        # TAMPILKAN KOMENTAR
+st.markdown("### 💬 Semua Komentar")
+
+df_komen = pd.read_csv(file_komen)
+
+for i in range(len(df_komen)):
+    stars = "⭐️" * int(df_komen["Rating"][i])
+    st.markdown(f"""
+    <div class="review-box">
+        <b>{df_komen["Nama"][i]}</b><br>
+        <span style="color:gold;">{stars}</span><br>
+        <span style="color:#ddd;">{df_komen["Komentar"][i]}</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+# KOMENTAR TERBAIK
+st.markdown("### 🌟 Komentar Terbaik (5⭐️)")
+
+terbaik = df_komen[df_komen["Rating"] == 5]
+
+for i in range(len(terbaik)):
+    st.success(f"⭐️ {terbaik['Nama'].iloc[i]}: {terbaik['Komentar'].iloc[i]}")
