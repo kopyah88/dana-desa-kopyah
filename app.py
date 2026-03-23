@@ -55,7 +55,7 @@ disqus_html = f"""
     <script>
         var disqus_config = function () {{
             this.page.url = window.location.origin;
-            this.page.identifier = "dana-desa-kopyah-v3"; 
+            this.page.identifier = "dana-desa-kopyah-final-banget"; 
         }};
         (function() {{
             var d = document, s = d.createElement('script');
